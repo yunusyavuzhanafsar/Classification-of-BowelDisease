@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kalın Bağırsak Hastalık Teşhisi</title>
+  <link href="{{ url_for('static', filename='images/HOSPİTAL.jpg') }}" rel="icon" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/a.css') }}" rel="stylesheet" />
+</head>
+
+<body>
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{{ url_for('home') }}" class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">Kalın Bağırsak Hastalık Teşhisi</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown pe-3">
+          {% if user %}
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.name }} {{ user.surname }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/logout">
+                <i class="bi bi-box-arrow-right"></i>Çıkış Yap
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('settings') }}">
+                <i class="bi bi-pencil"></i> Düzenle
+              </a>
+            </li>
+          </ul>
+          {% else %}
+          <form method="POST">
+            <button type="submit">Giriş Yap</button>
+          </form>
+          {% endif %}
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Flash Mesajları -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <aside id="sidebar" class="sidebar">
+      {% if user %}
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-journal-text"></i><span>Kayıtlı Hastalar</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="{{ url_for('patients') }}">
+                <i class="bi bi-circle"></i><span>Hasta Bilgileri</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('patient_search') }}">
+                <i class="bi bi-search"></i><span>Hasta Arama</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      {% endif %}
+    </aside>
+
+    <main id="main" class="main">
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Tüm Hasta Bilgileri</h5>
+                {% if patients %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Ad</th>
+                      <th scope="col">Soyad</th>
+                      <th scope="col">TC No</th>
+                      <th scope="col">Teşhis</th>
+                      <th scope="col">Kayıt Tarihi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                      <td>{{ patient.ad }}</td>
+                      <td>{{ patient.soyad }}</td>
+                      <td>{{ patient.tckn }}</td>
+                      <td>{{ patient.teshis }}</td>
+                      <td>{{ patient['tarih_kayit'] }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% else %}
+                <p>Henüz hasta kaydı bulunmamaktadır.</p>
+                {% endif %}
+                <!-- Sayfalama Alanı -->
+                <div class="pagination-container">
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                      <!-- Önceki sayfa linki -->
+                      {% if page > 1 %}
+                      <li class="page-item">
+                        <a class="page-link" href="{{ url_for('patients', page=page-1) }}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      {% else %}
+                      <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      {% endif %}
+
+                      <!-- Sayfa numaraları -->
+                      {% for p in range(1, total_pages + 1) %}
+                      <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('patients', page=p) }}">{{ p }}</a>
+                      </li>
+                      {% endfor %}
+
+                      <!-- Sonraki sayfa linki -->
+                      {% if page < total_pages %} <li class="page-item">
+                        <a class="page-link" href="{{ url_for('patients', page=page+1) }}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                  </nav>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+
+  </div>
+
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; <strong><span>2024</span></strong>
+    </div>
+  </footer>
+  <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kalın Bağırsak Hastalık Teşhisi</title>
+  <link href="{{ url_for('static', filename='images/HOSPİTAL.jpg') }}" rel="icon" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/a.css') }}" rel="stylesheet" />
+</head>
+
+<body>
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{{ url_for('home') }}" class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">Kalın Bağırsak Hastalık Teşhisi</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown pe-3">
+          {% if user %}
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.name }} {{ user.surname }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/logout">
+                <i class="bi bi-box-arrow-right"></i>Çıkış Yap
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('settings') }}">
+                <i class="bi bi-pencil"></i> Düzenle
+              </a>
+            </li>
+          </ul>
+          {% else %}
+          <form method="POST">
+            <button type="submit">Giriş Yap</button>
+          </form>
+          {% endif %}
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Flash Mesajları -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert-container">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <aside id="sidebar" class="sidebar">
+      {% if user %}
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-journal-text"></i><span>Kayıtlı Hastalar</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="{{ url_for('patients') }}">
+                <i class="bi bi-circle"></i><span>Hasta Bilgileri</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('patient_search') }}">
+                <i class="bi bi-search"></i><span>Hasta Arama</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      {% endif %}
+    </aside>
+
+    <main id="main" class="main">
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Hasta Ara</h5>
+                <form method="post">
+                  <div class="row mb-3">
+                    <div class="col-sm-5">
+                      <input type="text" class="form-control" name="tcno" placeholder="TC No" required />
+                    </div>
+                    <div class="col-sm-5">
+                      <button type="submit" class="btn btn-primary">Hasta Getir</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Hasta Bilgileri</h5>
+
+                {% if patient %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Ad</th>
+                      <th scope="col">Soyad</th>
+                      <th scope="col">TC No</th>
+                      <th scope="col">Teşhis</th>
+                      <th scope="col">İşlem</th> <!-- Yeni sütun: İşlem -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ patient.ad }}</td>
+                      <td>{{ patient.soyad }}</td>
+                      <td>{{ patient.tckn }}</td>
+                      <td>{{ patient.teshis }}</td>
+                      <td>
+                        <!-- Silme butonu -->
+                        <form action="{{ url_for('sil', id=patient.id) }}" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-danger">Sil</button>
+                        </form>
+
+                        <!-- Düzenle butonu -->
+                        <a href="{{ url_for('edit_patient', id=patient.id) }}" class="btn btn-warning">Düzenle</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {% else %}
+                <p>Hasta bulunamadı.</p>
+                {% endif %}
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; <strong><span>2024</span></strong>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

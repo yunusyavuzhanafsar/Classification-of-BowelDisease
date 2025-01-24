@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kalın Bağırsak Hastalık Teşhisi</title>
+  <link href="{{ url_for('static', filename='images/HOSPİTAL.jpg') }}" rel="icon" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/a.css') }}" rel="stylesheet" />
+  <style>
+    .btn-custom {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-custom:hover {
+      background-color: #0056b3;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .btn-outline-custom {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-outline-custom:hover {
+      background-color: #f8f9fa;
+      color: #0056b3;
+      border-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    footer {
+      padding: 20px 0;
+      background-color: #f8f9fa;
+      text-align: center;
+      border-top: 1px solid #ddd;
+    }
+
+    .card-footer {
+      background-color: #f8f9fa;
+      border-top: 1px solid #ddd;
+      padding: 10px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{{ url_for('index') }}" class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">Kalın Bağırsak Hastalık Teşhisi</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown pe-3">
+          {% if user %}
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{user.name}} {{user.surname}}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/logout">
+                <i class="bi bi-box-arrow-right"></i>Çıkış Yap
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('settings') }}">
+                <i class="bi bi-pencil"></i> Düzenle
+              </a>
+            </li>
+          </ul>
+          {% else %}
+          <form method="POST">
+            <button type="submit">Giriş Yap</button>
+          </form>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="main" style="display: flex; justify-content: center; min-height: 100vh; margin-left: auto;">
+    <section class="section" style="width: 100%; max-width: 600px;">
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="card shadow-lg rounded-4 border-light" style="background-color: #f9f9f9;">
+            <div class="card-body">
+              <h5 class="card-title text-center mb-4" style="font-size: 1.5rem; font-weight: bold;">Şifre Değiştirme
+              </h5>
+
+              <!-- Hata mesajı gösterme -->
+              {% if error %}
+              <div class="alert alert-danger text-center">{{ error }}</div>
+              {% endif %}
+
+              <!-- Şifre değiştirme formu -->
+              <form method="POST" action="/settings">
+                <div class="mb-3">
+                  <label for="old_password" class="form-label">Eski Şifre</label>
+                  <input type="password" class="form-control" id="old_password" name="old_password" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="new_password" class="form-label">Yeni Şifre</label>
+                  <input type="password" class="form-control" id="new_password" name="new_password" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="confirm_password" class="form-label">Yeni Şifreyi Tekrar Girin</label>
+                  <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-custom btn-primary">Şifreyi Değiştir</button>
+                </div>
+              </form>
+
+              <div class="text-center mt-3">
+                <a href="/home" class="btn btn-outline-custom btn-sm">Ana Sayfaya Dön</a>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="copyright">
+                &copy; <strong><span>2024</span></strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/js/main.js"></script>
+</body>
+
+</html>
